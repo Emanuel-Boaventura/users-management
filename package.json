@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc build src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -21,8 +23,12 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
+    "@types/node": "^24.0.10",
     "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.4",
-    "tsx": "^4.20.3"
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
   }
 }

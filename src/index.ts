@@ -4,41 +4,48 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import express from "express";
 import { usersTable } from "./db/schema";
 const app = express();
-const port = 3000;
+const port = process.env.SERVER_HOST || 3000;
 
-const db = drizzle(process.env.DATABASE_URL!);
+const db = drizzle(process.env.DB_URL!);
 
-async function main() {
-  const user: typeof usersTable.$inferInsert = {
+app.get("/", async (req, res) => {
+  res.send("Hello World!");
+});
+
+app.get("/users", async (req, res) => {
+  const users = await db.select().from(usersTable);
+  console.log("Getting all users from the database: ", users);
+
+  res.send(users);
+});
+
+app.post("/users", async (req, res) => {
+  const newUser: typeof usersTable.$inferInsert = {
     name: "John",
     age: 30,
     email: "john@example.com",
   };
-  
-  await db.insert(usersTable).values(user);
+
+  const response = await db.insert(usersTable).values(newUser);
   console.log("New user created!");
 
-  const users = await db.select().from(usersTable);
-  console.log("Getting all users from the database: ", users);
-  /*
-  const users: {
-    id: number;
-    name: string;
-    age: number;
-    email: string;
-  }[]
-  */
+  res.send(response);
+});
 
-  await db
+app.put("/users/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  const newUser = await db
     .update(usersTable)
     .set({
       age: 31,
     })
-    .where(eq(usersTable.email, user.email));
+    .where(eq(usersTable.id, Number(userId)));
   console.log("User info updated!");
 
-  await db.delete(usersTable).where(eq(usersTable.email, user.email));
-  console.log("User deleted!");
-}
+  res.send(newUser);
+});
 
-main();
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
