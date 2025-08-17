@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: drizzle-postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  migrator:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build:
+      context: .
+      target: build
+    volumes:
+      - ./:/app
+    restart: "no"
+    env_file: .env
+    command: npm run db:migrate
+
+  api:
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+    build:
+      context: .
+      target: build
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    env_file: .env
+    command: npm run dev
+
+volumes:
+  postgres_data:

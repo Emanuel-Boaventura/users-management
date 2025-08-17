@@ -7,10 +7,10 @@ const updatedAt = timestamp("updated_at", { withTimezone: true })
   .$onUpdate(() => new Date());
 
 export const usersTable = pgTable("users", {
-  age: integer().notNull(),
-  createdAt,
-  email: varchar({ length: 255 }).notNull().unique(),
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
+  email: varchar({ length: 255 }).notNull().unique(),
+  age: integer().notNull(),
+  createdAt,
   updatedAt,
 });

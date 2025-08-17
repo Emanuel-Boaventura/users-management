@@ -1,4 +1,11 @@
 services:
+  api:
+    build:
+      context: .
+      target: production
+    ports:
+      - "3000:3000"
+
   postgres:
     image: postgres:latest
     container_name: drizzle-postgres
@@ -9,6 +16,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
- 
+
 volumes:
   postgres_data:
