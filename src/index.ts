@@ -1,51 +1,14 @@
+import router from "#modules/users/routes.js";
 import "dotenv/config";
-import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import express from "express";
 
-import { usersTable } from "./db/schema";
-const app = express();
+export const app = express();
 const port = process.env.SERVER_HOST ?? "3333";
+export const db = drizzle(process.env.DB_URL ?? "");
 
-const db = drizzle(process.env.DB_URL ?? "");
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.get("/users", async (req, res) => {
-  const users = await db.select().from(usersTable);
-  console.log("Getting all users from the database: ", users);
-
-  res.send(users);
-});
-
-app.post("/users", async (req, res) => {
-  const newUser: typeof usersTable.$inferInsert = {
-    age: 30,
-    email: "john@example.com",
-    name: "John",
-  };
-
-  const response = await db.insert(usersTable).values(newUser);
-  console.log("New user created!");
-
-  res.send(response);
-});
-
-app.put("/users/:id", async (req, res) => {
-  const userId = req.params.id;
-
-  const newUser = await db
-    .update(usersTable)
-    .set({
-      age: 31,
-    })
-    .where(eq(usersTable.id, Number(userId)));
-  console.log("User info updated!");
-
-  res.send(newUser);
-});
+app.use(express.json());
+app.use(router);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
