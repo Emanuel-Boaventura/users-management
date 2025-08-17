@@ -2,13 +2,14 @@ import "dotenv/config";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import express from "express";
+
 import { usersTable } from "./db/schema";
 const app = express();
-const port = process.env.SERVER_HOST || 3000;
+const port = process.env.SERVER_HOST ?? "3333";
 
-const db = drizzle(process.env.DB_URL!);
+const db = drizzle(process.env.DB_URL ?? "");
 
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
@@ -21,9 +22,9 @@ app.get("/users", async (req, res) => {
 
 app.post("/users", async (req, res) => {
   const newUser: typeof usersTable.$inferInsert = {
-    name: "John",
     age: 30,
     email: "john@example.com",
+    name: "John",
   };
 
   const response = await db.insert(usersTable).values(newUser);
