@@ -9,8 +9,7 @@ async function getUsers(req: Request, res: Response) {
 }
 
 async function getUserById(req: Request, res: Response) {
-  const userId = Number(req.params.id);
-  const users = await UserServices.findById(userId);
+  const users = await UserServices.findById(req.params.id);
 
   if (users.length === 0) {
     return res.status(404).send("User not found");
@@ -32,22 +31,18 @@ async function createUser(req: Request, res: Response) {
 }
 
 async function updateUser(req: Request, res: Response) {
-  const userId = Number(req.params.id);
-
   const result = updateUserSchema.safeParse(req.body);
   if (!result.success) {
     return res.status(400).send(result.error);
   }
 
-  const updatedUser = await UserServices.updateUser(userId, result.data);
+  const updatedUser = await UserServices.updateUser(req.params.id, result.data);
 
   res.send(updatedUser[0]);
 }
 
 async function deleteUserById(req: Request, res: Response) {
-  const userId = Number(req.params.id);
-
-  const deletedUser = await UserServices.deleteById(userId);
+  const deletedUser = await UserServices.deleteById(req.params.id);
 
   res.send(deletedUser[0]);
 }
