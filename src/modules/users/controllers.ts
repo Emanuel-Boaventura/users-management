@@ -3,48 +3,68 @@ import { createUserSchema, updateUserSchema } from "#modules/users/validations.j
 import { Request, Response } from "express";
 
 async function getUsers(req: Request, res: Response) {
-  const users = await UserServices.findAll();
+  try {
+    const users = await UserServices.findAll();
 
-  res.send(users);
+    res.send(users);
+  } catch (error) {
+    res.status(500).send({ error });
+  }
 }
 
 async function getUserById(req: Request, res: Response) {
-  const users = await UserServices.findById(req.params.id);
+  try {
+    const users = await UserServices.findById(req.params.id);
 
-  if (users.length === 0) {
-    return res.status(404).send("User not found");
+    if (users.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    res.send(users[0]);
+  } catch (error) {
+    res.status(500).send({ error });
   }
-
-  res.send(users[0]);
 }
 
 async function createUser(req: Request, res: Response) {
-  const result = createUserSchema.safeParse(req.body);
+  try {
+    const result = createUserSchema.safeParse(req.body);
 
-  if (!result.success) {
-    return res.status(400).send(JSON.parse(result.error.message));
+    if (!result.success) {
+      return res.status(400).send(JSON.parse(result.error.message));
+    }
+
+    const createdUser = await UserServices.createUser(result.data);
+
+    res.send(createdUser[0]);
+  } catch (error) {
+    res.status(500).send({ error });
   }
-
-  const createdUser = await UserServices.createUser(result.data);
-
-  res.send(createdUser[0]);
 }
 
 async function updateUser(req: Request, res: Response) {
-  const result = updateUserSchema.safeParse(req.body);
-  if (!result.success) {
-    return res.status(400).send(result.error);
+  try {
+    const result = updateUserSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).send(result.error);
+    }
+
+    const updatedUser = await UserServices.updateUser(req.params.id, result.data);
+
+    res.send(updatedUser[0]);
+  } catch (error) {
+    res.status(500).send({ error });
   }
-
-  const updatedUser = await UserServices.updateUser(req.params.id, result.data);
-
-  res.send(updatedUser[0]);
 }
 
 async function deleteUserById(req: Request, res: Response) {
-  const deletedUser = await UserServices.deleteById(req.params.id);
+  try {
+    const deletedUser = await UserServices.deleteById(req.params.id);
 
-  res.send(deletedUser[0]);
+    res.send(deletedUser[0]);
+  } catch (error) {
+    res.status(500).send({ error });
+  }
 }
 
 export const UserController = {
