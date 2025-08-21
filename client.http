@@ -1,0 +1,38 @@
+GET http://localhost:3000/users HTTP/1.1
+
+###
+
+GET http://localhost:3000/users/f89f75fc-d4fc-4cf1-8e16-54d634f445fb HTTP/1.1
+content-type: application/json
+
+###
+
+POST http://localhost:3000/users HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Emanuel Boaventura",
+  "email": "emanuel2@example.com",
+  "age": 30
+}
+
+###
+
+PUT http://localhost:3000/users/f89f75fc-d4fc-4cf1-8e16-54d634f445fb HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Emanuel Boaventura EDITADO",
+  "email": "emanuel23@example.com",
+  "age": 23
+}
+###
+
+DELETE http://localhost:3000/users/f89f75fc-d4fc-4cf1-8e16-54d634f445fb HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Emanuel Boaventura EDITADO",
+  "email": "emanuel23@example.com",
+  "age": 23
+}
